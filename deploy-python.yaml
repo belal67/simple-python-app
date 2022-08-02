@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  python-deploy
+  namespace: apps-ns
+  labels:
+    app:  pythonapp
+spec:
+  selector:
+    matchLabels:
+      app: pythonapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  pythonapp
+    spec:
+      containers:
+      - name:  python-container
+        image:  belalhany/devops_challenge
+        ports:
+        - containerPort:  80
+          name:  http
+        - containerPort: 8000
+        
+
+
