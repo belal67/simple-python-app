@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service-app
+  namespace: apps-ns
+spec:
+  selector:
+    app: pythonapp
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+
