@@ -1,0 +1,48 @@
+version: 0.1             
+component: build
+timeoutInSeconds: 500
+shell: bash     
+env:
+  variables:
+  vaultVariables:
+  exportedVariables:
+    - BUILDRUN_HASH      
+    - DOCKER_PASSWORD
+steps:
+  - type: Command
+    name: "define tag for image"
+    timeoutInSeconds: 4000
+    command: |
+      export BUILDRUN_HASH = `echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+      echo "BUILDRUN_HASH = $BUILDRUN_HASH
+
+  - type: Command
+    timeoutInSeconds: 400
+    name: "Dockerize"
+    command: |
+      docker build -t test-image .
+      docker login -u belalhany -p ${DOCKER_PASSWORD}
+      docker tag test-image belalhany/python_app:${BUILDRUN_HASH}
+      docker push belalhany/python_app:${BUILDRUN_HASH}
+    onFailure:
+      - type: Command
+        command: |
+          echo "Handling Failure"
+          build_result=FAILURE
+          echo "Failure successfully handled"
+        timeoutInSeconds: 400
+
+  - type: Command
+    timeoutInSeconds: 400
+    name: "Dockerizer & Test2"
+    command: |
+      build_result=SUCESS
+      patch_number==`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+
+outputArtifacts:
+  - name: app-image
+    type: DOCKER_IMAGE
+    location: test-image:latest
+  - name: python-deployment
+    type: BINARY
+    location: deploy-app/deploy-python.yaml

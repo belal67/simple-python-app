@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  python-deploy
+  name:  python-deployment
   namespace: apps-ns
   labels:
     app:  pythonapp
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name:  python-container
-        image:  belalhany/devops_challenge
+        image:  belalhany/python_app:${BUILDRUN_HASH}
         ports:
         - containerPort:  80
           name:  http
